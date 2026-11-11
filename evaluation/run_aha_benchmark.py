@@ -117,6 +117,8 @@ def main() -> None:
     parser.add_argument("--timeout-seconds", type=int, default=150)
     parser.add_argument("--seed", type=int, default=20261111)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--retry-failures", action="store_true",
+                        help="Retry previously recorded failed attempts, preserving them in failure_history")
     args = parser.parse_args()
 
     if args.repetitions < 1:
@@ -169,9 +171,21 @@ def main() -> None:
         f'model_reasoning_effort="{args.reasoning_effort}"', "--json"
     ]
     for q, rep, condition in planned:
-        if any(x["id"] == q["id"] and x["repetition"] == rep
-               and x["condition"] == condition for x in output["responses"]):
-            continue
+        existing = next((x for x in output["responses"]
+                         if x["id"] == q["id"] and x["repetition"] == rep
+                         and x["condition"] == condition), None)
+        if existing is not None:
+            failed = (existing["exit_code"] != 0 or not existing["answer"]
+                      or bool(existing.get("tool_events")))
+            if not failed:
+                continue
+            if not args.retry_failures:
+                raise RuntimeError(
+                    f"Failed result recorded for {q['id']} repetition {rep} {condition}. "
+                    "Inspect the error, then use --retry-failures to retry it."
+                )
+            output.setdefault("failure_history", []).append(existing)
+            output["responses"].remove(existing)
         response = run_codex(command, build_prompt(condition, q["question"], skill),
                              args.timeout_seconds)
         output["responses"].append({
