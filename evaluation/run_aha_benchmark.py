@@ -10,6 +10,7 @@ Optional Windows setup:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import random
@@ -123,6 +124,12 @@ def main() -> None:
     skill = args.skill.read_text(encoding="utf-8")
     benchmark = json.loads(args.cases.read_text(encoding="utf-8"))
     questions = benchmark["cases"]
+    fingerprints = {
+        "skill_sha256": hashlib.sha256(skill.encode("utf-8")).hexdigest(),
+        "cases_sha256": hashlib.sha256(args.cases.read_bytes()).hexdigest(),
+        "generic_sha256": hashlib.sha256(GENERIC.encode("utf-8")).hexdigest(),
+        "common_sha256": hashlib.sha256(COMMON.encode("utf-8")).hexdigest(),
+    }
     if len({x["id"] for x in questions}) != len(questions):
         raise ValueError("Duplicate question IDs")
     planned = [(q, rep, condition)
@@ -141,13 +148,15 @@ def main() -> None:
         output = json.loads(args.out.read_text(encoding="utf-8"))
         meta = output.get("meta", {})
         expected = {"model": args.model, "effort": args.reasoning_effort,
-                    "seed": args.seed, "skill": str(args.skill)}
+                    "seed": args.seed, "skill": str(args.skill),
+                    "repetitions": args.repetitions, **fingerprints}
         if any(meta.get(key) != value for key, value in expected.items()):
             raise ValueError("Existing results are from different settings; choose another output path.")
     else:
         output = {
             "meta": {"model": args.model, "effort": args.reasoning_effort,
                      "seed": args.seed, "skill": str(args.skill),
+                     "repetitions": args.repetitions, **fingerprints,
                      "timestamp_utc": datetime.now(timezone.utc).isoformat(),
                      "note": "Generated responses only; not a human comprehension study."},
             "responses": [],
