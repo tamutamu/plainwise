@@ -61,8 +61,8 @@ class BenchmarkTests(unittest.TestCase):
             skill.write_text("original skill", encoding="utf-8")
             cases = root / "cases.json"
             cases.write_text(json.dumps({
-                "cases": [{"id": "Q01", "question": "なぜ？"},
-                          {"id": "Q02", "question": "どうして？"}]
+                "cases": [{"id": "Q01", "question": "なぜ？", "accuracy_guard": "正確性"},
+                          {"id": "Q02", "question": "どうして？", "accuracy_guard": "正確性"}]
             }, ensure_ascii=False), encoding="utf-8")
             output = root / "out.json"
             args = [
@@ -111,6 +111,24 @@ class BenchmarkTests(unittest.TestCase):
             self.assertEqual(len(key_data["key"]), 2)
             self.assertEqual(set(key_data["key"][0]["labels"].values()),
                              set(benchmark.CONDITIONS))
+
+            # A failed attempt must never silently count as a completed run.
+            saved["responses"][0]["exit_code"] = 1
+            saved["responses"][0]["answer"] = ""
+            output.write_text(json.dumps(saved, ensure_ascii=False), encoding="utf-8")
+            with patch.object(sys, "argv", args):
+                with self.assertRaisesRegex(RuntimeError, "Failed result recorded"):
+                    benchmark.main()
+
+            with patch.object(sys, "argv", args + ["--retry-failures"]):
+                with patch.object(benchmark, "run_codex", return_value=fake_result) as run:
+                    benchmark.main()
+                    run.assert_called_once()
+            reloaded = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(len(reloaded["responses"]), 6)
+            self.assertEqual(len(reloaded["failure_history"]), 1)
+            self.assertEqual(reloaded["failure_history"][0]["exit_code"], 1)
+            self.assertTrue(all(x["exit_code"] == 0 for x in reloaded["responses"]))
 
 
 if __name__ == "__main__":
