@@ -1,0 +1,5 @@
+# Local evaluation outputs may include provider errors or private metadata.
+__pycache__/
+*.py[cod]
+.venv/
+evaluation/results/
