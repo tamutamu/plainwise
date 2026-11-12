@@ -22,6 +22,7 @@ Python 3.10以上、認証済みのCodex CLIが必要です。
 python evaluation/run_aha_benchmark.py --dry-run
 python evaluation/run_aha_benchmark.py
 python evaluation/make_blind_review.py
+python evaluation/make_reader_forms.py
 ```
 
 Codex CLIがPATHにないWindows環境では、`PLAINWISE_CODEX_CMD_JSON` に `["node.exeの絶対パス","codex.jsの絶対パス"]` のJSON文字列を設定できます。
@@ -29,6 +30,25 @@ Codex CLIがPATHにないWindows環境では、`PLAINWISE_CODEX_CMD_JSON` に `[
 生成結果は `evaluation/results/` に保存します。途切れたら同じコマンドで再開可能です。異なるモデルやスキルに切り替えた場合は、別の出力先を使用してください。
 
 **生成時のエラーやツール使用は、黙って除外・再実行せずに記録して確認します。** 判定者が推測できるようなスキル名も回答本文に含めません。
+
+
+### 人間の読み比べ
+
+`make_reader_forms.py` は回答の出所を伏せ、**16問ずつのA/B比較を3種類**作成します。元の条件は、各設問について3種類すべての対戦（通常vs一般指示、一般指示vsPlainwise、通常vsPlainwise）を1回ずつ評価できるよう分散されます。
+
+- `evaluation/results/reader_forms/F1.md`、`F2.md`、`F3.md`：回答者に渡す読み比べ用紙
+- 同ディレクトリの `F1-response.csv` など：回答者が記入するCSV。選択は `A`、`B`、`tie`、`neither`。気づきの強さは両回答とも0〜4、重大な誤りは `1` または `0` で記録
+- `answer-key.json`：**回答者へ渡さない**条件対応表
+
+回収したCSVを集計する場合は、例えば次のように実行します。
+
+```bash
+python evaluation/score_reader_forms.py \
+  --answer-key evaluation/results/reader_forms/answer-key.json \
+  --response-files evaluation/results/reader_forms/F1-response.csv
+```
+
+**空欄のCSVひな型は評価件数に数えません。** 集計は対戦結果と気づきの自己採点を記述的に示すもので、ファイル数を独立した評価者の人数とみなしたり、人間への学習効果を自動的に証明したりしません。感想の自由記述は人間が確認します。
 
 ## 採点
 
