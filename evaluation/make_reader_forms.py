@@ -47,7 +47,7 @@ def make_forms(raw: dict, forms: int, seed: int) -> tuple[list[tuple[str, str]],
     for form_idx in range(forms):
         form_id = f"F{form_idx + 1}"
         lines = [
-            f"# Plainwise 読み比べ — {form_id}",
+            f"# 説明文の読み比べ — {form_id}",
             "",
             "回答の出所は伏せられています。読みやすさだけでなく、",
             "説明を聞く前と後で、何の見方が変わったかを評価してください。",
