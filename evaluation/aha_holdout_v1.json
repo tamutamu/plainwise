@@ -1,0 +1,114 @@
+{
+  "title": "Plainwise unseen 16-question evaluation set",
+  "version": "1.0",
+  "created": "2026-11-11",
+  "purpose": "Test whether Plainwise creates a justified, specific change of viewpoint beyond ordinary explanations—not merely a longer answer or extra metaphor.",
+  "policy": "Freeze the questions before model outputs are generated; never optimize against these questions and reuse them as unseen holdout.",
+  "conditions": [
+    "baseline",
+    "strong_general_instruction",
+    "plainwise_candidate"
+  ],
+  "generation": {
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "medium",
+    "repetitions": 3,
+    "independent_sessions": true,
+    "target_outputs": 144,
+    "order": "seeded per question and repetition"
+  },
+  "factual_guard": "An appealing but inaccurate explanation fails regardless of style.",
+  "measurement": {
+    "primary": "Blinded reader can identify a new actionable distinction or changed premise justified by the reasoning.",
+    "secondary": [
+      "Reader-rated actual aha (not merely clarity)",
+      "factual correctness",
+      "natural spoken Japanese",
+      "conciseness"
+    ],
+    "blind_comparison": "Shuffle A/B/C identities and use the same exact common prompt, then recruit independent people where possible. Same-model AI judges are exploratory only.",
+    "caution": "This dataset alone does not prove performance; it contains no results or fabricated scores."
+  },
+  "cases": [
+    {
+      "id": "Q01",
+      "question": "苦情の件数が減ったのに、サービスへの不満は増えていることがあるのはなぜですか？",
+      "accuracy_guard": "苦情窓口の利用障壁、離脱、母集団変化。苦情件数と不満の人数は同義でない"
+    },
+    {
+      "id": "Q02",
+      "question": "システムの応答速度を改善したのに、利用者の待ち時間が長くなることがあるのはなぜですか？",
+      "accuracy_guard": "処理能力・到着率・待ち行列・他のボトルネック。条件を明示し速度改善が悪化の原因と断定しない"
+    },
+    {
+      "id": "Q03",
+      "question": "会議を30分短縮したのに、結論が出るまでの日数が増えることがあるのはなぜですか？",
+      "accuracy_guard": "会議外の確認・決裁・再調整、単一会議の時間と意思決定全体の時間"
+    },
+    {
+      "id": "Q04",
+      "question": "公開されている数字はすべて正しいのに、資料の結論が間違っていることがあるのはなぜですか？",
+      "accuracy_guard": "真の個別数字と不適切な比較条件・分母・因果解釈の違い"
+    },
+    {
+      "id": "Q05",
+      "question": "無料で返品できるネットショップで、売上が増えても利益が減ることがあるのはなぜですか？",
+      "accuracy_guard": "売上と返品・送料・再販売の費用、返品条件や売上認識の定義に注意"
+    },
+    {
+      "id": "Q06",
+      "question": "優秀な人だけ採用した部署で、チームの成果が下がることがあるのはなぜですか？",
+      "accuracy_guard": "個人能力と協業・役割重複・調整、決めつけない"
+    },
+    {
+      "id": "Q07",
+      "question": "学習アプリを毎日長時間使っているのに、成績が上がらないことがあるのはなぜですか？",
+      "accuracy_guard": "利用時間と習得・理解・転移、学習内容や評価指標の違い"
+    },
+    {
+      "id": "Q08",
+      "question": "売上は前年と同じなのに、会社の経営が苦しくなることがあるのはなぜですか？",
+      "accuracy_guard": "費用・資金回収・在庫・債務返済、売上と利益・現金の違い"
+    },
+    {
+      "id": "Q09",
+      "question": "『発言は自由です』という会議でも、誰も反対意見を言わないことがあるのはなぜですか？",
+      "accuracy_guard": "形式的な自由と実際の発言コスト、心理や意図を断定しない"
+    },
+    {
+      "id": "Q10",
+      "question": "健康診断の受診率が上がったのに、病気の発見率が下がることがあるのはなぜですか？",
+      "accuracy_guard": "母集団の変化・分母の増加・事前確率。医療的断定は避ける"
+    },
+    {
+      "id": "Q11",
+      "question": "間違いのない手順書があるのに、作業ミスが起きることがあるのはなぜですか？",
+      "accuracy_guard": "手順の正しさと現場で遵守できるか、割込み・例外・インターフェース"
+    },
+    {
+      "id": "Q12",
+      "question": "テストで問題を発見する件数が増えているのに、ソフトウェア品質が改善しているとは限らないのはなぜですか？",
+      "accuracy_guard": "発見件数と残存欠陥、検査範囲・作り込み量の違い、断定不可"
+    },
+    {
+      "id": "Q13",
+      "question": "買い物の候補を3つに絞ったのに、かえって決めにくくなることがあるのはなぜですか？",
+      "accuracy_guard": "似た候補と異なる判断基準、単純に数だけで決まらない"
+    },
+    {
+      "id": "Q14",
+      "question": "社員の満足度アンケートの回答者が増えたのに、職場の状況が分かりにくくなることがあるのはなぜですか？",
+      "accuracy_guard": "回答者構成・質問の意味・集計、回答率と代表性の違い"
+    },
+    {
+      "id": "Q15",
+      "question": "利用者が増えたのに、サービスの価値が下がることがあるのはなぜですか？",
+      "accuracy_guard": "混雑・供給制約・ネットワーク外部性、条件によって価値は上がる場合もある"
+    },
+    {
+      "id": "Q16",
+      "question": "メールを短くしたのに、相手の確認作業が増えることがあるのはなぜですか？",
+      "accuracy_guard": "送信者の文字数と受信者の必要な情報・往復回数は別"
+    }
+  ]
+}
