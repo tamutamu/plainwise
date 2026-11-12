@@ -28,7 +28,7 @@ def main() -> None:
         groups.setdefault(key, []).append(response)
 
     lines = [
-        "# Plainwise：出所を伏せた説明比較",
+        "# 説明文：出所を伏せた比較",
         "",
         "**比較の目的**：理解しやすかったかだけでなく、",
         "説明の前後で何の見方が変わったか、具体的に書けるかを確かめます。",
