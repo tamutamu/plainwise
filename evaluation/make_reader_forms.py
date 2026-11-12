@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import random
 from pathlib import Path
@@ -110,6 +111,17 @@ def main() -> None:
     args.out_dir.mkdir(parents=True, exist_ok=True)
     for filename, content in pages:
         (args.out_dir / filename).write_text(content, encoding="utf-8")
+    columns = ["form_id", "id", "repetition", "choice", "aha_A", "aha_B",
+               "factual_error_A", "factual_error_B", "insight"]
+    for filename, _ in pages:
+        form_id = Path(filename).stem
+        with (args.out_dir / (form_id + "-response.csv")).open(
+                "w", encoding="utf-8-sig", newline="") as file:
+            writer = csv.DictWriter(file, fieldnames=columns)
+            writer.writeheader()
+            for record in answer_key:
+                if record["form_id"] == form_id:
+                    writer.writerow({k: record[k] for k in ("form_id", "id", "repetition")})
     (args.out_dir / "answer-key.json").write_text(
         json.dumps({"seed": args.seed, "key": answer_key}, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8"
