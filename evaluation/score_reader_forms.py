@@ -55,7 +55,7 @@ def read_reviews(answer_key: dict, paths: list[Path]) -> list[dict]:
                     "scores": {"A": score_a, "B": score_b},
                     "factual_error": {"A": factual_a, "B": factual_b},
                     "insight": (row["insight"] or "").strip(),
-                    "file": path.name,
+                    "file": str(path.resolve()),
                 })
     return records
 
