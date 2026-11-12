@@ -13,7 +13,8 @@ def fake_raw(question_count=6, repetitions=3):
             for cond in forms.CONDITIONS:
                 responses.append({
                     "id": qid, "repetition": rep, "condition": cond,
-                    "question": f"質問 {qid}", "answer": f"{qid} 回答{rep} {cond}_hidden",
+                    "question": f"質問 {qid}",
+                    "answer": f"{qid} 回答{rep} " + {"baseline":"青","strong_general_instruction":"赤","plainwise_candidate":"緑"}[cond],
                     "exit_code": 0, "tool_events": []
                 })
     return {"responses": responses}
