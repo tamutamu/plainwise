@@ -43,3 +43,19 @@ python evaluation/make_blind_review.py
 WindowsでCodex CLIがPATHから呼べない場合は、`evaluation/README.md` の`PLAINWISE_CODEX_CMD_JSON` を利用します。個別環境ではユーザー自身の利用枠と認証状態に従ってください。
 
 **本記録は検証完了報告ではありません。** 生成回答も匿名評価も未実施のため、新版Plainwiseの品質が旧版や強い一般指示より良いかどうかは未判定です。利用制限が解除されるまでは、結果を創作して埋めません。
+
+
+## 2026-11-14：144回答生成完了・盲検評価準備
+
+- Windows `zenn` セッションの作業ブランチを `git pull --ff-only` で同期
+- `python -m unittest evaluation.test_benchmark evaluation.test_reader_forms -v`：10件すべて成功
+- `evaluation/results/aha_v1_raw.json` を確認。16問 × 3反復 × 3条件 = **144回答すべて生成済み**（各条件48回答）
+- `exit_code != 0` は0件、空回答0件、ツール呼び出し0件、エラー文字列あり0件、失敗履歴0件
+- 回答の平均文字数：baseline 188.9、strong_general_instruction 208.8、plainwise_candidate 207.7。長さが近いことは品質優位の証拠ではない
+- `python _run_local.py` で再開・整合性確認。新たな推論を要求せず、完了した回答を維持
+- `python evaluation/make_blind_review.py`：48組の3条件比較資料を生成
+- `python evaluation/make_reader_forms.py`：2回答ずつの盲検比較フォームを3枚生成。設問ごとに3種類のペアを割り当てる。回答元を示すanswer-keyは別ファイル
+- 原本・盲検資料はローカルの `evaluation/results/` に保持。個別回答には第三者による正確性検証・読者評価がまだ必要
+- **未判定**：Plainwiseが強い一般指示より読者の理解・発見を改善するか。144回答の生成成功を「品質実証」と呼ばない
+- 次工程：全回答の事実・計算・因果を `accuracy_guard` と照合し、盲検で読者評価を収集。強い一般指示との差が実証できない場合は改稿し、新規ホールドアウトで再評価する
+
